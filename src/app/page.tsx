@@ -54,14 +54,13 @@ function HomePage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <h1 className="text-3xl font-bold">Timetable</h1>
             <div className="flex w-full max-sm:flex-col gap-4">
-              {/* Course Selector */}
               <Select value={selectedCourse} onValueChange={setSelectedCourse}>
                 <SelectTrigger className="w-[180px] max-sm:w-full bg-white text-black">
                   <SelectValue placeholder="Select Course" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="bca">BCA</SelectItem>
-                  {courses.map((c, index) => (
+                  {courses?.map((c, index) => (
                     <SelectItem key={index} value={c.course}>
                       {c.course}
                     </SelectItem>
@@ -113,7 +112,7 @@ function HomePage() {
         >
           {
           loading ? <Loader />:
-          teachers.map((teacher: any, index) => (
+          teachers && teachers?.map((teacher: any, index) => (
             <TeacherCard
               key={index}
               teacher={teacher.name}

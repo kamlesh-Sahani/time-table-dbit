@@ -29,12 +29,10 @@ export default function TimetablePage() {
   const getData = async () => {
     try {
       const response = await fetch("/api/get-course"); 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const courseData = await response.json();
-     
+      if (response.ok) {
+        const courseData = await response.json();
       setCourse(courseData.data)
+      }
     } catch (error) {
       console.error("Error fetching course data:", error);
     }
@@ -44,7 +42,6 @@ export default function TimetablePage() {
     getData();
   }, []);
   
-
   return (
     <div className="min-h-screen  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -57,9 +54,9 @@ export default function TimetablePage() {
               </SelectTrigger>
               <SelectContent>
                   <SelectItem value="bca">BCA</SelectItem>
-                {course.map((c:any,index:any)=>{
+                {course && course?.map((c:any)=>{
                   return(
-                    <SelectItem key={index} value={c.course}>{c.course}</SelectItem> 
+                    <SelectItem key={c._id} value={c.course}>{c.course}</SelectItem> 
                   )
                 })}
               </SelectContent>

@@ -20,6 +20,7 @@ export const adminLogin = async({email,password}:{email:string,password:string})
                 success:false
             }
         }
+        
         const admin = await adminModel.findOne({email}).select("+password");
         if(!admin){
             return {

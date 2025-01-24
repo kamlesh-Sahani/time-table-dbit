@@ -25,7 +25,7 @@ export function AddCourse() {
       const courseData = await getCourse();
       setCourse(courseData);
     } catch (error) {
-      console.error("Error fetching course data:", error);
+      console.log("Error fetching course data:", error);
       toast({
         title: "Error",
         description: "Unable to fetch course data. Please try again later.",
@@ -81,7 +81,7 @@ export function AddCourse() {
       setSemester("");
       fetchCourse();
     } catch (error:any) {
-      console.error("Error adding course and semester:", error);
+      console.log("Error adding course and semester:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to add course and semester.",
@@ -114,7 +114,7 @@ export function AddCourse() {
       });
       fetchCourse();
     } catch (error:any) {
-      console.error("Error deleting course:", error);
+      console.log("Error deleting course:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to delete course.",

@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       data: course,
     });
   } catch (error) {
-    console.error("Error getting course and semester:", error);
+    console.log("Error getting course and semester:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

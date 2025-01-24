@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ timetable: timetable?.data || [] });
   } catch (error) {
-    console.error("Error fetching timetable:", error);
+    console.log("Error fetching timetable:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -159,7 +159,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating timetable:", error);
+    console.log("Error updating timetable:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 const TeacherCard = ({ teacher, designation, id }: any) => {
-  const firstLetter = teacher.charAt(0).toUpperCase();
+  const firstLetter = teacher?.charAt(0)?.toUpperCase();
   return (
     <Link href={`/teacher/${teacher}`}>
       <div className="bg-white w-[300px] p-5 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex gap-4 justify-center items-center cursor-pointer">

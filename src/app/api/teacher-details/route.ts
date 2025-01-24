@@ -57,7 +57,7 @@ export async function GET(request: Request) {
       teacherData,
     });
   } catch (error) {
-    console.error("Error fetching teacher details:", error);
+    console.log("Error fetching teacher details:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

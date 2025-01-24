@@ -55,7 +55,7 @@ export async function GET(request: Request) {
       busyTeachers: Array.from(busyTeachers),
     });
   } catch (error) {
-    console.error("Error fetching teacher availability:", error);
+    console.log("Error fetching teacher availability:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

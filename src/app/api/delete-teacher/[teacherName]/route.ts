@@ -82,7 +82,7 @@ export async function DELETE(request: Request) {
     );
 
   } catch (error) {
-    console.error("Error deleting teacher and timetables:", error);
+    console.log("Error deleting teacher and timetables:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

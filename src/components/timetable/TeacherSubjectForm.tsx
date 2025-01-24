@@ -47,7 +47,7 @@
 //       const data = await response.json();
 //       setTeachers(data.data); // Assuming data contains an array of teacher objects
 //     } catch (error) {
-//       console.error("Error fetching teachers:", error);
+//       console.log("Error fetching teachers:", error);
 //     }
 //   }
 //   useEffect(() => {
@@ -319,7 +319,7 @@ export function TeacherSubjectForm({ course, semester }: TeacherSubjectFormProps
         description: "Teachers fetched successfully.",
       });
     } catch (error) {
-      console.error("Error fetching teachers:", error);
+      console.log("Error fetching teachers:", error);
       toast({
         title: "Error",
         description: "Unable to fetch teachers. Please try again later.",
@@ -379,7 +379,7 @@ export function TeacherSubjectForm({ course, semester }: TeacherSubjectFormProps
       setDesignation("");
       setSubject([]);
     } catch (error) {
-      console.error("Error deleting teacher:", error);
+      console.log("Error deleting teacher:", error);
       toast({
         title: "Error",
         description: "Failed to delete teacher. Please try again.",
@@ -436,7 +436,7 @@ export function TeacherSubjectForm({ course, semester }: TeacherSubjectFormProps
       setIsCustomTeacher(false);
       fetchTeachers();
     } catch (error: any) {
-      console.error("Error adding teacher and subject:", error);
+      console.log("Error adding teacher and subject:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to add teacher and subject.",

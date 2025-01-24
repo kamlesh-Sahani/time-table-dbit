@@ -33,7 +33,7 @@ const isConnected: { connect?: number | null } = { connect: null };
 async function dbConnect() {
   // Ensure environment variable is set
   if (!process.env.MONGO_URI) {
-    console.error("MONGO_URI environment variable is not defined.");
+    console.log("MONGO_URI environment variable is not defined.");
     throw new Error("MONGO_URI environment variable is missing");
   }
 
@@ -57,7 +57,7 @@ async function dbConnect() {
     // Set the connection status to indicate success
     isConnected.connect = conn.connection.readyState;
   } catch (error: any) {
-    console.error("Database connection error:", error);  // Log the full error object
+    console.log("Database connection error:", error);  // Log the full error object
     throw new Error("Failed to connect to the database");
   }
 }

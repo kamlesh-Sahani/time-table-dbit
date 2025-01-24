@@ -45,7 +45,7 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting course:", error);
+    console.log("Error deleting course:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

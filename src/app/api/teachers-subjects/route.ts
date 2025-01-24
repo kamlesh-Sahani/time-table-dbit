@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       courseSubjects: courseSubjects?.subjects || [],
     });
   } catch (error) {
-    console.error("Error fetching teachers and subjects:", error);
+    console.log("Error fetching teachers and subjects:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       data: teacher,
     });
   } catch (error) {
-    console.error("Error updating teacher and subject:", error);
+    console.log("Error updating teacher and subject:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

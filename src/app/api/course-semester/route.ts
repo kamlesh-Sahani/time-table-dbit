@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       data: course,
     });
   } catch (error) {
-    console.error("Error adding course and semester:", error);
+    console.log("Error adding course and semester:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

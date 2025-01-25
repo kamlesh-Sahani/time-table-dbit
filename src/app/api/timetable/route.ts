@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ timetable: timetable?.data || [] });
   } catch (error) {
-    console.log("Error fetching timetable:", error);
+   
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -65,7 +65,7 @@ export async function PUT(request: Request) {
   try {
     const { course, semester, day, time, teacher, subject } =
       await request.json();
-      console.log("TimeTable Data:",course,semester,day,time,teacher,subject)
+      
     const Days = [
       "monday",  
       "tuesday",
@@ -159,7 +159,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.log("Error updating timetable:", error);
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react"; // Import the delete icon
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ interface Course {
   semesters: string[];
 }
 
-export function AddCourse() {
+export function AddCourse({setCourseUpdate}:{setCourseUpdate:Dispatch<SetStateAction<boolean>>}) {
   const { toast } = useToast();
   const [courseName, setCourseName] = useState("");
   const [semester, setSemester] = useState("");
@@ -25,7 +25,7 @@ export function AddCourse() {
       const courseData = await getCourse();
       setCourse(courseData);
     } catch (error) {
-      console.log("Error fetching course data:", error);
+      
       toast({
         title: "Error",
         description: "Unable to fetch course data. Please try again later.",
@@ -62,7 +62,6 @@ export function AddCourse() {
           semester,
         }),
       });
-
       if (!response.ok) {
         const errorResponse = await response.json();
         const errorMessage = errorResponse.error;
@@ -72,6 +71,7 @@ export function AddCourse() {
           variant: "destructive",
         });
       }
+      setCourseUpdate((prev)=>!prev);
       toast({
         title: "Success",
         description: "Course and semester added successfully.",
@@ -81,7 +81,7 @@ export function AddCourse() {
       setSemester("");
       fetchCourse();
     } catch (error:any) {
-      console.log("Error adding course and semester:", error);
+ 
       toast({
         title: "Error",
         description: error.message || "Failed to add course and semester.",
@@ -108,13 +108,14 @@ export function AddCourse() {
         });
       }
 
+      setCourseUpdate((prev)=>!prev);
       toast({
         title: "Success",
         description: "Course deleted successfully.",
       });
       fetchCourse();
     } catch (error:any) {
-      console.log("Error deleting course:", error);
+ 
       toast({
         title: "Error",
         description: error.message || "Failed to delete course.",

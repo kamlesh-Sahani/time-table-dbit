@@ -17,7 +17,6 @@ export const deleteSlot = async (course: string, semester: string, day: number, 
     await timetable.save();
     return { success: true, message: "Slot cleared successfully" };
   } catch (error: any) {
-    console.log("Error deleting slot:", error);
     throw new Error(error.message || "Internal server error");
   }
 };
@@ -33,7 +32,7 @@ export const getCourse = async () => {
     }));
     return mydata;
   } catch (error: any) {
-    console.log("Error fetching course data:", error);
+    
     throw new Error(error.message || "Internal server error");
   }
 };

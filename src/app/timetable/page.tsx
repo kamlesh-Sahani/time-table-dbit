@@ -16,25 +16,27 @@ import { TeacherStats } from "@/components/timetable/TeacherStats";
 import { TeacherSubjectForm } from "@/components/timetable/TeacherSubjectForm";
 import { AddCourse } from "@/components/AddCourse";
 import { useToast } from "@/hooks/use-toast";
+import Loader from "@/components/Loader";
 
 export default function TimetablePage() {
   const [selectedCourse, setSelectedCourse] = useState<string>("bca");
   const [selectedSemester, setSelectedSemester] = useState<string>("5");
   const [viewCourse, setViewCourse] = useState(false);
   const [course, setCourse] = useState([]);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-const {toast}=useToast();
+  const [courseUpdate,setCourseUpdate] = useState<boolean>(false);
+  const { toast } = useToast();
   const getData = async () => {
     setLoading(true);
-    setError(null); 
+    setError(null);
 
     try {
       const response = await fetch("/api/get-course");
 
       if (!response.ok) {
         const errorResponse = await response.json();
-        const errorMessage = errorResponse.error; 
+        const errorMessage = errorResponse.error;
         toast({
           title: "Error",
           description: errorMessage,
@@ -48,7 +50,6 @@ const {toast}=useToast();
         title: "Success",
         description: "Data fetched successfully",
       });
-
     } catch (error: any) {
       toast({
         title: "Error",
@@ -62,7 +63,7 @@ const {toast}=useToast();
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [courseUpdate]);
 
   return (
     <div className="min-h-screen p-6">
@@ -98,6 +99,7 @@ const {toast}=useToast();
                 ))}
               </SelectContent>
             </Select>
+
             <div className="gap-4 flex justify-center text-white items-center border-gray-300">
               <Button
                 className="bg-[#4B3F72] max-md:w-full hover:bg-[#7160a7]"
@@ -116,13 +118,13 @@ const {toast}=useToast();
         )}
 
         {loading && (
-          <div className="text-center text-gray-600">Loading courses...</div>
+          <Loader />
         )}
-        <div>{viewCourse && <AddCourse />}</div>
+        <div>{viewCourse && <AddCourse setCourseUpdate={setCourseUpdate} />}</div>
         {selectedCourse && selectedSemester && !loading && !error && (
           <div className="flex flex-col gap-2">
             <div className="lg:col-span-2">
-              <Card className="p-6 bg-[#d6a4af]">
+              <Card className="p-6 ">
                 <TimetableGrid
                   course={selectedCourse}
                   semester={selectedSemester}

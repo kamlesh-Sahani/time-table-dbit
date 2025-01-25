@@ -5,13 +5,13 @@ export async function GET(request: Request) {
   try {
     await dbConnect();
     const course = await Teacher.find();
-    console.log("Saad", course);
+  
     return NextResponse.json({
       success: true,
       data: course,
     });
   } catch (error) {
-    console.log("Error getting course and semester:", error);
+  
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

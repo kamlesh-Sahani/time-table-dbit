@@ -8,7 +8,7 @@ export async function DELETE(request: Request) {
     const url = new URL(request.url);
     const teacherName = decodeURIComponent(url.pathname.split("/").pop()!); // Decode the teacher name
     
-    console.log(teacherName); // This should now log "Poonam Arora" instead of "Poonam%20Arora"
+   
     
     if (!teacherName) {
       return NextResponse.json(
@@ -82,7 +82,7 @@ export async function DELETE(request: Request) {
     );
 
   } catch (error) {
-    console.log("Error deleting teacher and timetables:", error);
+ 
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

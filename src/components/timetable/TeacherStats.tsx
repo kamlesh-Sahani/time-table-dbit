@@ -98,7 +98,7 @@ export function TeacherStats() {
           </Select>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-4">
+        <div className="grid lg:grid-cols-2 gap-4 overflow-y-auto h-[400px]">
           <Card>
             <CardHeader>
               <CardTitle className="text-sm font-medium text-green-600">

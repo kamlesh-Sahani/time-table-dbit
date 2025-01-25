@@ -7,7 +7,7 @@ export async function DELETE(request: Request) {
   try {
     const url = new URL(request.url);
     const courseToDelete = url.pathname.split("/").pop();
-    console.log("Course to delete:", courseToDelete);
+    
 
     if (!courseToDelete) {
       return NextResponse.json(
@@ -45,7 +45,7 @@ export async function DELETE(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log("Error deleting course:", error);
+  
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

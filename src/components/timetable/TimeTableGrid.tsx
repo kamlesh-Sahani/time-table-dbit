@@ -360,7 +360,7 @@ export function TimetableGrid({ course, semester }: TimetableGridProps) {
   return (
     <div className="space-y-4 bg-gradient-to-tr  p-2 rounded-sm">
       <div className="flex justify-between ">
-        <h1 className="text-3xl font-bold text-center text-white">
+        <h1 className="text-3xl font-bold text-center text-black">
           {course?.charAt(0).toUpperCase() + course?.slice(1)?.toLowerCase()} -{" "}
           {semester} Timetable
         </h1>

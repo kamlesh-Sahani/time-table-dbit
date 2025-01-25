@@ -38,7 +38,7 @@ export async function GET() {
       message: "successfuly  get",
     });
   } catch (error) {
-    console.log("Error fetching timetable:", error);
+    
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

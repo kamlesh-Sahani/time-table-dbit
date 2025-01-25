@@ -36,6 +36,7 @@ function HomePage() {
         setCourses(courseData.data || []);
       }
 
+
       if(teacherRes.ok){
         const teacherData = await teacherRes.json();
         setTeachers(teacherData.data || [])
@@ -83,7 +84,6 @@ function HomePage() {
                   <SelectValue placeholder="Select Course" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="BCA">BCA</SelectItem>
                   {courses.map((c, index) => (
                     <SelectItem key={index} value={c.course}>
                       {c.course}

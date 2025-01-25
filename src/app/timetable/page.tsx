@@ -46,16 +46,9 @@ export default function TimetablePage() {
 
       const courseData = await response.json();
       setCourse(courseData.data);
-      toast({
-        title: "Success",
-        description: "Data fetched successfully",
-      });
+    
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error,
-        variant: "destructive",
-      });
+     console.log(error)
     } finally {
       setLoading(false);
     }
@@ -76,7 +69,6 @@ export default function TimetablePage() {
                 <SelectValue placeholder="Select Course" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Select</SelectItem>
                 {course.map((c: any, index: number) => (
                   <SelectItem key={index} value={c.course}>
                     {c.course}

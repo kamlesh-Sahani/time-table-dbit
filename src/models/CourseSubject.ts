@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import { unique } from "next/dist/build/utils";
 
 const courseSubjectSchema = new mongoose.Schema({
   course: {
     type: String,
     required: true,
+    unique:[true,"course must be unique"]
   },
   semesters: {
     type: String,

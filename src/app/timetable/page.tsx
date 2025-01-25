@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/Loader";
 
 export default function TimetablePage() {
-  const [selectedCourse, setSelectedCourse] = useState<string>("bca");
+  const [selectedCourse, setSelectedCourse] = useState<string>("BCA");
   const [selectedSemester, setSelectedSemester] = useState<string>("5");
   const [viewCourse, setViewCourse] = useState(false);
   const [course, setCourse] = useState([]);
@@ -76,7 +76,7 @@ export default function TimetablePage() {
                 <SelectValue placeholder="Select Course" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bca">BCA</SelectItem>
+                <SelectItem value="">Select</SelectItem>
                 {course.map((c: any, index: number) => (
                   <SelectItem key={index} value={c.course}>
                     {c.course}

@@ -16,12 +16,9 @@ export async function GET(request: Request) {
         { status: 400 }
       );
     }
-
     await dbConnect();
-
     const timetable = await MyTimetable.findOne({ course, semester });
-  
-
+    
     return NextResponse.json({ timetable: timetable?.data || [] });
   } catch (error) {
    

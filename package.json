@@ -23,6 +23,7 @@
     "html2pdf.js": "^0.9.3",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.454.0",
+    "moment": "^2.30.1",
     "mongoose": "^8.8.0",
     "next": "15.0.3",
     "react": "^18.3.1",

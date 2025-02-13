@@ -5,6 +5,7 @@ const isConnected: { connect?: number | null } = { connect: null };
 
 async function dbConnect() {
   // Ensure environment variable is set
+  console.log(process.env.MONGO_URI,"mongodb")
   if (!process.env.MONGO_URI) {
     console.log("MONGO_URI environment variable is not defined.");
     throw new Error("MONGO_URI environment variable is missing");

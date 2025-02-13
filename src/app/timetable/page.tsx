@@ -17,16 +17,18 @@ import { TeacherSubjectForm } from "@/components/timetable/TeacherSubjectForm";
 import { AddCourse } from "@/components/AddCourse";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/Loader";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
 export default function TimetablePage() {
   const [selectedCourse, setSelectedCourse] = useState<string>("BCA");
   const [selectedSemester, setSelectedSemester] = useState<string>("5");
-  const [viewCourse, setViewCourse] = useState(false);
   const [course, setCourse] = useState([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [courseUpdate,setCourseUpdate] = useState<boolean>(false);
+  const [courseUpdate, setCourseUpdate] = useState<boolean>(false);
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const getData = async () => {
     setLoading(true);
     setError(null);
@@ -42,13 +44,13 @@ export default function TimetablePage() {
           description: errorMessage,
           variant: "destructive",
         });
+        return;
       }
 
       const courseData = await response.json();
       setCourse(courseData.data);
-    
     } catch (error: any) {
-     console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -76,10 +78,7 @@ export default function TimetablePage() {
                 ))}
               </SelectContent>
             </Select>
-            <Select
-              value={selectedSemester}
-              onValueChange={setSelectedSemester}
-            >
+            <Select value={selectedSemester} onValueChange={setSelectedSemester}>
               <SelectTrigger className="w-[180px] max-md:w-full bg-white text-black">
                 <SelectValue placeholder="Select Semester" />
               </SelectTrigger>
@@ -92,14 +91,23 @@ export default function TimetablePage() {
               </SelectContent>
             </Select>
 
-            <div className="gap-4 flex justify-center text-white items-center border-gray-300">
-              <Button
-                className="bg-[#4B3F72] max-md:w-full hover:bg-[#7160a7]"
-                onClick={() => setViewCourse(!viewCourse)}
-              >
-                Add Course <Plus className="w-4 h-4 mr-2" />
-              </Button>
-            </div>
+            {/* Dialog for Add Course */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-[#4B3F72] max-md:w-full hover:bg-[#7160a7]">
+                  Add Course <Plus className="w-4 h-4 ml-2" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add New Course</DialogTitle>
+                </DialogHeader>
+                <AddCourse setCourseUpdate={setCourseUpdate} closeDialog={() => setIsDialogOpen(false)} />
+                <DialogClose asChild>
+                  <Button variant="outline" className="mt-4 w-full">Close</Button>
+                </DialogClose>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -109,29 +117,19 @@ export default function TimetablePage() {
           </div>
         )}
 
-        {loading && (
-          <Loader />
-        )}
-        <div>{viewCourse && <AddCourse setCourseUpdate={setCourseUpdate} />}</div>
+        {loading && <Loader />}
+
         {selectedCourse && selectedSemester && !loading && !error && (
           <div className="flex flex-col gap-2">
             <div className="lg:col-span-2">
-              <Card className="p-6 ">
-                <TimetableGrid
-                  course={selectedCourse}
-                  semester={selectedSemester}
-                />
+              <Card className="p-6">
+                <TimetableGrid course={selectedCourse} semester={selectedSemester} />
               </Card>
             </div>
             <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
-              <div>
-                <Card className="p-6 w-full">
-                  <TeacherSubjectForm
-                    course={selectedCourse}
-                    semester={selectedSemester}
-                  />
-                </Card>
-              </div>
+              <Card className="p-6 w-full">
+                <TeacherSubjectForm course={selectedCourse} semester={selectedSemester} />
+              </Card>
               <Card className="p-6 w-full">
                 <TeacherStats />
               </Card>

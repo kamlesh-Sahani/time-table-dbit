@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect,memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -11,83 +10,88 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TimetableGrid } from "@/components/timetable/TimeTableGrid";
+import TimetableGrid from "@/components/timetable/TimeTableGrid";
 import { TeacherStats } from "@/components/timetable/TeacherStats";
 import { TeacherSubjectForm } from "@/components/timetable/TeacherSubjectForm";
 import { AddCourse } from "@/components/AddCourse";
-import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/Loader";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { getcourseAndSem } from "@/actions/schedule.action";
 
-export default function TimetablePage() {
-  const [selectedCourse, setSelectedCourse] = useState<string>("BCA");
-  const [selectedSemester, setSelectedSemester] = useState<string>("5");
-  const [course, setCourse] = useState([]);
-  const [error, setError] = useState<string | null>(null);
+function TimetablePage() {
+  const [selectedCourse, setSelectedCourse] = useState<string>();
+  const [selectedSemester, setSelectedSemester] = useState<string>();
+  const [courseAndSemeter, setCourseAndSemeter] =
+    useState<{ course: string; semesters: { semester: number }[] }[]>();
+  const [totalSemeter, setTotalSemeter] =
+    useState<{ [semster: string]: number }[]>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [courseUpdate, setCourseUpdate] = useState<boolean>(false);
-  const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const getData = async () => {
+  const [uiUpdate, setUiUpdate] = useState<boolean>(false);
+  const getCourseAndSemester = async () => {
     setLoading(true);
-    setError(null);
 
     try {
-      const response = await fetch("/api/get-course");
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        const errorMessage = errorResponse.error;
-        toast({
-          title: "Error",
-          description: errorMessage,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const courseData = await response.json();
-      setCourse(courseData.data);
+      const res = await getcourseAndSem();
+      setCourseAndSemeter(JSON.parse(res.data!));
     } catch (error: any) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
-    getData();
-  }, [courseUpdate]);
-
+    getCourseAndSemester();
+  }, [uiUpdate]);
+  const handleCourse = (course: string) => {
+    const currentSemeter = courseAndSemeter?.filter(
+      (data) => data.course === course
+    );
+    if (currentSemeter) {
+      setTotalSemeter(currentSemeter[0].semesters);
+    }
+    setSelectedCourse(course);
+  };
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-3xl font-bold">Timetable Management</h1>
           <div className="flex w-full max-md:flex-col gap-4">
-            <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+            <Select value={selectedCourse} onValueChange={handleCourse}>
               <SelectTrigger className="w-[180px] max-md:w-full bg-white text-black">
                 <SelectValue placeholder="Select Course" />
               </SelectTrigger>
               <SelectContent>
-                {course.map((c: any, index: number) => (
-                  <SelectItem key={index} value={c.course}>
-                    {c.course}
-                  </SelectItem>
-                ))}
+                {courseAndSemeter &&
+                  courseAndSemeter.map((data, index: number) => (
+                    <SelectItem key={index} value={data.course}>
+                      {data.course}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
-            <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+            <Select
+              value={selectedSemester}
+              onValueChange={setSelectedSemester}
+            >
               <SelectTrigger className="w-[180px] max-md:w-full bg-white text-black">
                 <SelectValue placeholder="Select Semester" />
               </SelectTrigger>
               <SelectContent>
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-                  <SelectItem key={sem} value={sem.toString()}>
-                    Semester {sem}
-                  </SelectItem>
-                ))}
+                {totalSemeter &&
+                  totalSemeter.map((_, index) => (
+                    <SelectItem key={index} value={String(index + 1)}>
+                      Semester {index + 1}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 
@@ -102,33 +106,36 @@ export default function TimetablePage() {
                 <DialogHeader>
                   <DialogTitle>Add New Course</DialogTitle>
                 </DialogHeader>
-                <AddCourse setCourseUpdate={setCourseUpdate} closeDialog={() => setIsDialogOpen(false)} />
+                <AddCourse
+                  setUiUpdate={setUiUpdate}
+                  setIsDialogOpen={setIsDialogOpen}
+                />
                 <DialogClose asChild>
-                  <Button variant="outline" className="mt-4 w-full">Close</Button>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Close
+                  </Button>
                 </DialogClose>
               </DialogContent>
             </Dialog>
           </div>
         </div>
-
-        {error && (
-          <div className="p-4 bg-red-100 text-red-800 border border-red-400 rounded">
-            {error}
-          </div>
-        )}
-
         {loading && <Loader />}
-
-        {selectedCourse && selectedSemester && !loading && !error && (
+        {selectedCourse && selectedSemester && !loading && (
           <div className="flex flex-col gap-2">
             <div className="lg:col-span-2">
               <Card className="p-6">
-                <TimetableGrid course={selectedCourse} semester={selectedSemester} />
+                <TimetableGrid
+                  course={selectedCourse}
+                  semester={selectedSemester}
+                />
               </Card>
             </div>
             <div className="grid md:grid-cols-2 grid-cols-1 gap-10">
               <Card className="p-6 w-full">
-                <TeacherSubjectForm course={selectedCourse} semester={selectedSemester} />
+                <TeacherSubjectForm
+                  course={selectedCourse}
+                  semester={selectedSemester}
+                />
               </Card>
               <Card className="p-6 w-full">
                 <TeacherStats />
@@ -140,3 +147,4 @@ export default function TimetablePage() {
     </div>
   );
 }
+export default memo(TimetablePage)

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,memo} from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   TimetableCell,
@@ -10,12 +10,12 @@ import {
 import { TimetableSlot } from "@/components/timetable-slot";
 import { TimeSlotEditor } from "@/components/time-slot-editor";
 import { AddTimeSlot } from "../add-time-slote";
+import { getSchedule } from "@/actions/schedule.action";
 interface TimetableGridProps {
   course: string;
   semester: string;
 }
-
-export function TimetableGrid({ course, semester }: TimetableGridProps) {
+ function TimetableGrid({ course, semester }: TimetableGridProps) {
   const { toast } = useToast();
   const [timetable, setTimetable] = useState<(TimetableCell | null)[][]>([]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
@@ -27,11 +27,19 @@ export function TimetableGrid({ course, semester }: TimetableGridProps) {
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedSubject, setSelectedSubject] = useState<string>("");
 
-  useEffect(() => {
-    fetchTimetableData();
-    fetchTeachersAndSubjects();
-    fetchTimeSlots();
-  }, [course, semester]);
+
+const fetchSchedule = async()=>{
+try{
+  const res = await getSchedule({course,semester:Number(semester)});
+  console.log(JSON.parse(res.schedule!),"schedule");
+}catch(error:any){
+  console.log(error);
+} 
+}
+  useEffect(()=>{
+    fetchSchedule();
+  },[course,semester])
+
 
   const fetchTimetableData = async () => {
     try {
@@ -356,6 +364,12 @@ export function TimetableGrid({ course, semester }: TimetableGridProps) {
       });
     }
   };
+  useEffect(() => {
+    fetchTimetableData();
+    fetchTeachersAndSubjects();
+    fetchTimeSlots();
+  }, [course, semester]);
+
 
   return (
     <div className="space-y-4 bg-gradient-to-tr  p-2 rounded-sm">
@@ -421,3 +435,4 @@ export function TimetableGrid({ course, semester }: TimetableGridProps) {
     </div>
   );
 }
+export default memo(TimetableGrid);

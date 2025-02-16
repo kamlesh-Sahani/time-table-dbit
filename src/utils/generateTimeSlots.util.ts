@@ -1,23 +1,14 @@
 import moment from "moment";
 const generateTimeSlots = () => {
-    const slots = [];
-    let startTime = moment("09:00 AM", "hh:mm A");
-  
-    for (let i = 0; i < 6; i++) {
-      // 6 periods per day
-      let endTime = moment(startTime).add(50, "minutes");
-  
-      slots.push({
-        startTime: startTime.format("hh:mm A"),
-        endTime: endTime.format("hh:mm A"),
-        subject: "no data",
-        teacher: [],
-      });
-  
-      // Update start time for next slot (gap of 10 minutes)
-      startTime = endTime.add(10, "minutes");
-    }
-    return slots;
+  const times = [
+    { startTime: "09:00 AM", endTime: "10:00 AM" },
+    { startTime: "10:00 AM", endTime: "11:00 AM" },
+    { startTime: "11:00 AM", endTime: "12:00 PM" },
+    { startTime: "12:00 PM", endTime: "01:00 PM" },
+    { startTime: "01:00 PM", endTime: "02:00 PM" },
+    { startTime: "02:00 PM", endTime: "03:00 PM" },
+  ];
+  return times;
   };
 
 

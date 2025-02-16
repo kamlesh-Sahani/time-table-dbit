@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { newCourse } from "@/actions/schedule.action";
 import toast from "react-hot-toast"
-export function AddCourse() {
+export function AddCourse({setUiUpdate,setIsDialogOpen}:{setUiUpdate:Dispatch<SetStateAction<boolean>>,setIsDialogOpen:Dispatch<SetStateAction<boolean>>}) {
   const [courseName, setCourseName] = useState<string>("");
   const [semester, setSemester] = useState<number | null>(null);
   const [loading,setLoading]=useState<boolean>(false)
@@ -22,10 +22,13 @@ export function AddCourse() {
       }
       setLoading(true);
       const res = await newCourse(courseData);
+      console.log(res)
       if(res?.success){
         toast.success(res.message);
+        setIsDialogOpen(false)
+        setUiUpdate((prev)=>!prev);
       }else{
-        toast.error(res?.message);
+        toast.error(res.message || "Already added!");
       }
     } catch (error: any) {
      console.log(error);
@@ -34,7 +37,6 @@ export function AddCourse() {
     setLoading(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>

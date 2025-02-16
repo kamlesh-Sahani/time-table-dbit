@@ -44,7 +44,6 @@ export function TimeSlotEditor({
     onDelete(index);
     setIsModalOpen(false); 
   };
-
   if (isEditing) {
     return (
       <div className="flex items-center gap-2">

@@ -79,7 +79,7 @@ export const getcourseAndSem = async ()=>{
 export const getSchedule = async({course,semester}:{course:string,semester:number})=>{
   try{
     console.log("Cpourse and semester",course,semester)
-    const schedule  = await ScheduleModel.findOne({course,"semesters.semester":semester});
+    const schedule  = await ScheduleModel.findOne({course,"semesters.semester":semester},{ "semesters.$": 1 });
     console.log("Datakjkdjfld",schedule);
     if(!schedule){
       return{
@@ -90,7 +90,7 @@ export const getSchedule = async({course,semester}:{course:string,semester:numbe
 
     return{
       success:true,
-      message:"schedule fond successfully",
+      message:"schedule found successfully",
       schedule:JSON.stringify(schedule)
     }
   }catch(error:any){

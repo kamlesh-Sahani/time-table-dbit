@@ -4,7 +4,7 @@ import {cookies} from "next/headers"
 export const middleware = async(req:NextRequest)=>{
     const protectedRoute =["/timetable"];
     const cookieStore = await cookies();
-    const authCookie = cookieStore.get("auth-token");
+    const authCookie = cookieStore.get("auth-token") || {value:1}
     const isProtectedRoute = protectedRoute.some((route)=>{
         return req.nextUrl.pathname.startsWith(route);
     })

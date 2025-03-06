@@ -251,6 +251,8 @@ export function TimetableSlot({
     );
   }
 
+  console.log(cell,"cell")
+
   return (
     <div className="min-h-[80px] flex justify-center items-center">
       <div

@@ -28,14 +28,11 @@ interface TimetableGridProps {
   const [selectedSubject, setSelectedSubject] = useState<string>("");
 
 
-const fetchSchedule = async()=>{
-try{
-  const res = await getSchedule({course,semester:Number(semester)});
-  console.log(JSON.parse(res.schedule!),"schedule");
-}catch(error:any){
-  console.log(error);
-} 
-}
+
+  const [scheduleData, setScheduleData] = useState<any>([]);
+
+
+
   useEffect(()=>{
     fetchSchedule();
   },[course,semester])
@@ -371,6 +368,35 @@ try{
   }, [course, semester]);
 
 
+
+
+
+
+
+
+
+
+
+
+  const fetchSchedule = async()=>{
+    try{
+      const res = await getSchedule({course,semester:Number(semester)});
+      setScheduleData(JSON.parse(res.schedule!));   
+      console.log(JSON.parse(res.schedule!),"schedule");
+    }catch(error:any){
+      console.log(error);
+    } 
+    }
+
+
+
+
+
+    console.log(timetable,"timetable")
+
+    console.log(DAYS,"days")
+
+    console.log(timeSlots,"timetableslot")
   return (
     <div className="space-y-4 bg-gradient-to-tr  p-2 rounded-sm">
       <div className="flex justify-between ">
@@ -393,6 +419,7 @@ try{
             </tr>
           </thead>
           <tbody className="">
+           
             {timeSlots.map((slot, timeIndex) => (
               <tr key={timeIndex}>
                 <td className="border p-2 font-medium bg-[#4B3F72] text-white">
@@ -402,7 +429,10 @@ try{
                     onSave={handleTimeSlotSave}
                     onDelete={handleDeleteTimeSlot}
                   />
+                  
                 </td>
+
+              
                 {DAYS.map((_, dayIndex) => (
                   <td
                     key={`${dayIndex}-${timeIndex}`}

@@ -100,3 +100,5 @@ export const getSchedule = async({course,semester}:{course:string,semester:numbe
     }
   }
 }
+
+

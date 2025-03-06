@@ -13,14 +13,14 @@ const timetableSchema = new mongoose.Schema({
     type: [
       [
         {
-          _id:String,
-          teacher: String,
+          _id: String,
+          teacher: [String],
           subject: String,
           day: String,
           start: String,
           end: String,
-          teacherCourse:String,
-          teacherSemester:String
+          teacherCourse: String,
+          teacherSemester: String,
         },
       ],
     ],

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSearchParams ,useRouter} from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import TimeTableContainer from "@/components/home/TimeTableContainer";
 import TeacherCard from "@/components/home/TeacherCard";
@@ -22,55 +22,64 @@ function HomePage() {
   const [courses, setCourses] = useState<{ course: string }[]>([]);
   const [teachers, setTeachers] = useState<{ teacher: string }[]>([]);
   const timeTableRef = useRef<HTMLDivElement | null>(null);
-  const [loading,setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const router = useRouter();
-  const {toast}=useToast();
-  const getTeacherAndCourse = async()=>{
+  const { toast } = useToast();
+  const getTeacherAndCourse = async () => {
     try {
       setLoading(true);
       const courseRes = await fetch("/api/get-course");
       const teacherRes = await fetch("/api/get-teacher");
-      if(courseRes.ok){
+
+      if (courseRes.ok) {
         const courseData = await courseRes.json();
+        console.log("Course Data:", courseData); // Debugging
         setCourses(courseData.data || []);
+      } else {
+        console.error("Failed to fetch courses:", await courseRes.text());
       }
 
-
-      if(teacherRes.ok){
+      if (teacherRes.ok) {
         const teacherData = await teacherRes.json();
-        setTeachers(teacherData.data || [])
+        console.log("Teacher Data:", teacherData); // Debugging
+        setTeachers(teacherData.data || []);
+      } else {
+        console.error("Failed to fetch teachers:", await teacherRes.text());
       }
-    } catch (error:any) {
+    } catch (error: any) {
+      console.error("Error fetching data:", error);
       toast({
         title: "Error",
         description: error.message || "Network or server error occurred.",
         variant: "destructive",
       });
-    }finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
+
   useEffect(() => {
     getTeacherAndCourse();
   }, []);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const course = searchParams.get("course")?.toUpperCase();
     const sem = searchParams.get("sem");
-    if(course){
+    if (course) {
       setSelectedCourse(course);
     }
-    if(sem){
+    if (sem) {
       setSelectedSemester(sem);
     }
-  },[searchParams])
+  }, [searchParams]);
 
   useEffect(() => {
-    router.push(`/?course=${selectedCourse?.toUpperCase()}&sem=${selectedSemester}`);
+    router.push(
+      `/?course=${selectedCourse?.toUpperCase()}&sem=${selectedSemester}`
+    );
   }, [selectedCourse, selectedSemester]);
-
+  console.log(teachers, courses);
   return (
     <div className="min-h-screen p-6 ">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -134,15 +143,17 @@ function HomePage() {
           className="flex gap-2 flex-wrap w-full justify-center items-center"
           id="/teachers"
         >
-          {
-          loading ? <Loader />:
-          teachers.map((teacher: any, index) => (
-            <TeacherCard
-              key={index}
-              teacher={teacher.name}
-              designation={teacher.designation}
-            />
-          ))}
+          {loading ? (
+            <Loader />
+          ) : (
+            teachers.map((teacher: any, index) => (
+              <TeacherCard
+                key={index}
+                teacher={teacher.name}
+                designation={teacher.designation}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

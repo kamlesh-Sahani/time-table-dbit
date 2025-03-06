@@ -6,7 +6,7 @@ import Time from "@/models/Time";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-  
+
     const course = searchParams.get("course");
     const semester = searchParams.get("semester");
 
@@ -18,10 +18,9 @@ export async function GET(request: Request) {
     }
     await dbConnect();
     const timetable = await MyTimetable.findOne({ course, semester });
-    
+
     return NextResponse.json({ timetable: timetable?.data || [] });
   } catch (error) {
-   
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -58,13 +57,119 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+// export async function PUT(request: Request) {
+//   try {
+//     const { course, semester, day, time, teacher, subject } =
+//       await request.json();
+
+//     const Days = [
+//       "monday",
+//       "tuesday",
+//       "wednesday",
+//       "thursday",
+//       "friday",
+//       "saturday",
+//       "sunday",
+//     ];
+//     await dbConnect();
+//  ;
+//     const timetables = await MyTimetable.find({});
+//     const courseTimes = await Time.find();
+//     let myTime = courseTimes[0].slots[Number(time)];
+//     let start = myTime.start;
+//     let end = myTime.end;
+//     let days = Days[Number(day)];
+//     let totalLecturesOnDay = 0;
+//     let hasTimeConflict = false;
+
+//     timetables.forEach((timetable: any) => {
+//       timetable.data.forEach((dayArray: any, dayIndex: any) => {
+//         if (dayIndex === day) {
+//           dayArray.forEach((slot: any, slotIndex: any) => {
+//             if (slot && slot.teacher === teacher) {
+//               totalLecturesOnDay++;
+//               if (slotIndex === time) {
+//                 hasTimeConflict = true;
+//               }
+//             }
+//           });
+//         }
+//       });
+//     });
+
+//     if (totalLecturesOnDay >= 5) {
+//       return NextResponse.json(
+//         {
+//           error:
+//             "Teacher cannot teach more than 5 subjects in a day across all timetables",
+//         },
+//         { status: 400 }
+//       );
+//     }
+
+//     if (hasTimeConflict) {
+//       return NextResponse.json(
+//         {
+//           error:
+//             "Teacher is already assigned at this time on the specified day",
+//         },
+//         { status: 400 }
+//       );
+//     }
+//     let timetable = await MyTimetable.findOne({ course, semester });
+
+//     if (!timetable) {
+//       timetable = new MyTimetable({
+//         course,
+//         semester,
+//         data: Array(5).fill(Array(6).fill(null)),
+//       });
+//     }
+//     const teacherConflict = timetable.data[day]?.[time]?.teacher === teacher;
+
+//     if (teacherConflict) {
+//       return NextResponse.json(
+//         { error: "Teacher has a timing conflict at the specified time" },
+//         { status: 400 }
+//       );
+//     }
+//     const newData = JSON.parse(JSON.stringify(timetable.data));
+//     if (!Array.isArray(newData[day])) {
+//       newData[day] = Array(6).fill(null);
+//     }
+//     newData[day][time] = {
+//       teacher,
+//       subject: subject,
+//       day: days,
+//       start: start,
+//       end: end,
+//       teacherCourse: course,
+//       teacherSemester: semester,
+//     };
+
+//     timetable.data = newData;
+
+//     await timetable.save();
+
+//     return NextResponse.json({ success: true });
+//   } catch (error) {
+
+//     return NextResponse.json(
+//       { error: "Internal server error" },
+//       { status: 500 }
+//     );
+//   }
+// }
 export async function PUT(request: Request) {
   try {
     const { course, semester, day, time, teacher, subject } =
       await request.json();
-      
+   console.log(teacher);
+    // Ensure teacher is an array
+    const teachersArray = Array.isArray(teacher) ? teacher : [teacher];
+
     const Days = [
-      "monday",  
+      "monday",
       "tuesday",
       "wednesday",
       "thursday",
@@ -72,22 +177,28 @@ export async function PUT(request: Request) {
       "saturday",
       "sunday",
     ];
+
     await dbConnect();
- ;
+
     const timetables = await MyTimetable.find({});
     const courseTimes = await Time.find();
     let myTime = courseTimes[0].slots[Number(time)];
     let start = myTime.start;
     let end = myTime.end;
     let days = Days[Number(day)];
+
     let totalLecturesOnDay = 0;
     let hasTimeConflict = false;
 
     timetables.forEach((timetable: any) => {
-      timetable.data.forEach((dayArray: any, dayIndex: any) => {
+      timetable.data.forEach((dayArray: any, dayIndex: number) => {
         if (dayIndex === day) {
-          dayArray.forEach((slot: any, slotIndex: any) => {
-            if (slot && slot.teacher === teacher) {
+          dayArray.forEach((slot: any, slotIndex: number) => {
+            if (
+              slot &&
+              Array.isArray(slot.teacher) &&
+              slot.teacher.some((t: string) => teachersArray.includes(t))
+            ) {
               totalLecturesOnDay++;
               if (slotIndex === time) {
                 hasTimeConflict = true;
@@ -97,8 +208,6 @@ export async function PUT(request: Request) {
         }
       });
     });
-
-   
 
     if (totalLecturesOnDay >= 5) {
       return NextResponse.json(
@@ -114,49 +223,49 @@ export async function PUT(request: Request) {
       return NextResponse.json(
         {
           error:
-            "Teacher is already assigned at this time on the specified day",
+            "One or more teachers are already assigned at this time on the specified day",
         },
         { status: 400 }
       );
     }
+
     let timetable = await MyTimetable.findOne({ course, semester });
 
     if (!timetable) {
       timetable = new MyTimetable({
         course,
         semester,
-        data: Array(5).fill(Array(6).fill(null)), 
+        data: Array(5).fill(Array(6).fill(null)),
       });
     }
-    const teacherConflict = timetable.data[day]?.[time]?.teacher === teacher;
 
-    if (teacherConflict) {
-      return NextResponse.json(
-        { error: "Teacher has a timing conflict at the specified time" },
-        { status: 400 }
+    const existingSlot = timetable.data[day]?.[time];
+
+    if (existingSlot) {
+      // Merge new teachers into existing ones without duplicates
+      existingSlot.teacher = Array.from(
+        new Set([...existingSlot.teacher, ...teachersArray])
       );
+    } else {
+      if (!Array.isArray(timetable.data[day])) {
+        timetable.data[day] = Array(6).fill(null);
+      }
+
+      timetable.data[day][time] = {
+        teacher: teachersArray, // Store as an array
+        subject: subject,
+        day: days,
+        start: start,
+        end: end,
+        teacherCourse: course,
+        teacherSemester: semester,
+      };
     }
-    const newData = JSON.parse(JSON.stringify(timetable.data));
-    if (!Array.isArray(newData[day])) {
-      newData[day] = Array(6).fill(null); 
-    }
-    newData[day][time] = {
-      teacher,
-      subject: subject,
-      day: days,
-      start: start,
-      end: end,
-      teacherCourse: course,
-      teacherSemester: semester,
-    };
-  
-    timetable.data = newData;
-   
+
     await timetable.save();
 
     return NextResponse.json({ success: true });
   } catch (error) {
-
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

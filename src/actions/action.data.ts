@@ -3,6 +3,7 @@ import dbConnect from "@/utils/db-connect";
 import Timetable from "@/models/Timetable";
 import { NextRequest, NextResponse } from "next/server";
 import CourseSubject from "@/models/CourseSubject";
+import { AddCourse } from '../components/AddCourse';
 export const deleteSlot = async (course: string, semester: string, day: number, time: number) => {
   try {
     await dbConnect(); 

@@ -29,10 +29,11 @@ function TimeTableContainer({ course, semester }: TimetableGridProps) {
         timeTableData.timetable || Array(5).fill(Array(6).fill(null))
       );
       setTimeSlots(slotData.slots || []);
-    } catch (error:any) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "An error occurred while fetching the data.",
+        description:
+          error.message || "An error occurred while fetching the data.",
         variant: "destructive",
       });
     } finally {
@@ -51,8 +52,8 @@ function TimeTableContainer({ course, semester }: TimetableGridProps) {
       ) : (
         <div className="p-2   w-full ">
           <h1 className="text-3xl font-bold text-center text-black pb-4">
-            {course?.charAt(0)?.toUpperCase() + course?.slice(1).toLowerCase()} -{" "}
-            {semester} Timetable
+            {course?.charAt(0)?.toUpperCase() + course?.slice(1).toLowerCase()}{" "}
+            - {semester} Timetable
           </h1>
           <div className="flex flex-col justify-center w-full  gap-2 z-20  overflow-x-auto">
             <div className="w-full flex flex-col justify-center sm:items-center  gap-2">
@@ -96,9 +97,21 @@ function TimeTableContainer({ course, semester }: TimetableGridProps) {
                             <span className="text-[14px] mt-2 font-bold capitalize">
                               {timetable[dayIndex][timeIndex]?.subject}
                             </span>
-                            <span className="text-[12px] mb-2 font-medium capitalize">
-                              {timetable[dayIndex][timeIndex]?.teacher}
-                            </span>
+                            <div className="flex flex-col text-[12px] mb-2 font-medium capitalize">
+                              {Array.isArray(
+                                timetable[dayIndex][timeIndex]?.teacher
+                              ) ? (
+                                timetable[dayIndex][timeIndex]?.teacher.map(
+                                  (t: string, i: number) => (
+                                    <span key={i}>{t}</span>
+                                  )
+                                )
+                              ) : (
+                                <span>
+                                  {timetable[dayIndex][timeIndex]?.teacher}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ) : (
                           <p className="text-[15px] font-medium capitalize">

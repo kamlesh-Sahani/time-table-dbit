@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect ,memo} from "react";
+import { useState, useEffect, memo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   TimetableCell,
@@ -15,7 +15,7 @@ interface TimetableGridProps {
   course: string;
   semester: string;
 }
- function TimetableGrid({ course, semester }: TimetableGridProps) {
+function TimetableGrid({ course, semester }: TimetableGridProps) {
   const { toast } = useToast();
   const [timetable, setTimetable] = useState<(TimetableCell | null)[][]>([]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
@@ -24,20 +24,12 @@ interface TimetableGridProps {
     time: number;
   } | null>(null);
   const [teachers, setTeachers] = useState<TeacherWithSubjects[]>([]);
-  const [selectedTeacher, setSelectedTeacher] = useState<string>("");
+  const [selectedTeacher, setSelectedTeacher] = useState<string[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string>("");
-
-
-
   const [scheduleData, setScheduleData] = useState<any>([]);
-
-
-
-  useEffect(()=>{
+  useEffect(() => {
     fetchSchedule();
-  },[course,semester])
-
-
+  }, [course, semester]);
   const fetchTimetableData = async () => {
     try {
       const response = await fetch(
@@ -54,7 +46,6 @@ interface TimetableGridProps {
       });
     }
   };
-
   const fetchTeachersAndSubjects = async () => {
     try {
       const response = await fetch(
@@ -93,18 +84,20 @@ interface TimetableGridProps {
     setEditingCell({ day, time });
     const currentCell = timetable[day]?.[time];
     if (currentCell) {
-      setSelectedTeacher(currentCell.teacher || "");
+      setSelectedTeacher(
+        Array.isArray(currentCell.teacher) ? currentCell.teacher : []
+      );
       setSelectedSubject(currentCell.subject || "");
     } else {
-      setSelectedTeacher("");
+      setSelectedTeacher([]);
       setSelectedSubject("");
     }
   };
-
-  const handleTeacherChange = (teacherName: string) => {
-    setSelectedTeacher(teacherName);
+  const handleTeacherChange = (teacherNames: string[]) => {
+    setSelectedTeacher(teacherNames); // Directly set the array of teachers
     setSelectedSubject("");
   };
+
   const handleDeleteSlot = async (day: number, time: number) => {
     try {
       const response = await fetch("/api/timetable", {
@@ -153,7 +146,8 @@ interface TimetableGridProps {
   };
 
   const handleCellSave = async () => {
-    if (!selectedTeacher || !selectedSubject) {
+    if (!selectedTeacher.length || !selectedSubject) {
+      // Ensure at least one teacher is selected
       toast({
         title: "Error",
         description: "Please select both teacher and subject",
@@ -163,7 +157,6 @@ interface TimetableGridProps {
     }
 
     try {
-      // Send the PUT request to save the timetable
       const response = await fetch("/api/timetable", {
         method: "PUT",
         headers: {
@@ -174,7 +167,7 @@ interface TimetableGridProps {
           semester,
           day: editingCell?.day,
           time: editingCell?.time,
-          teacher: selectedTeacher,
+          teacher: selectedTeacher, // Ensure it remains an array
           subject: selectedSubject,
         }),
       });
@@ -188,32 +181,28 @@ interface TimetableGridProps {
           description: errorMessage,
           variant: "destructive",
         });
-        return; // Don't proceed with DOM updates if the request failed
+        return;
       }
 
-      // After the request is successful, fetch the timetable data and update the state
       await fetchTimetableData();
 
-      // Update the timetable in the state
       const newTimetable = [...timetable];
       if (!Array.isArray(newTimetable[editingCell!.day])) {
         newTimetable[editingCell!.day] = Array(timeSlots.length).fill(null);
       }
       newTimetable[editingCell!.day][editingCell!.time] = {
-        teacher: selectedTeacher,
+        teacher: selectedTeacher, // Now an array
         subject: selectedSubject,
       };
 
-      // Show success toast after the data is updated
       toast({
         title: "Success",
         description: "Timetable updated successfully",
       });
 
-      // Update the state to reflect the new timetable
       setTimetable(newTimetable);
       setEditingCell(null);
-      setSelectedTeacher("");
+      setSelectedTeacher([]);
       setSelectedSubject("");
     } catch (error: any) {
       toast({
@@ -367,36 +356,21 @@ interface TimetableGridProps {
     fetchTimeSlots();
   }, [course, semester]);
 
-
-
-
-
-
-
-
-
-
-
-
-  const fetchSchedule = async()=>{
-    try{
-      const res = await getSchedule({course,semester:Number(semester)});
-      setScheduleData(JSON.parse(res.schedule!));   
-      console.log(JSON.parse(res.schedule!),"schedule");
-    }catch(error:any){
+  const fetchSchedule = async () => {
+    try {
+      const res = await getSchedule({ course, semester: Number(semester) });
+      setScheduleData(JSON.parse(res.schedule!));
+      console.log(JSON.parse(res.schedule!), "schedule");
+    } catch (error: any) {
       console.log(error);
-    } 
     }
+  };
 
+  console.log(timetable, "timetable");
 
+  console.log(DAYS, "days");
 
-
-
-    console.log(timetable,"timetable")
-
-    console.log(DAYS,"days")
-
-    console.log(timeSlots,"timetableslot")
+  console.log(timeSlots, "timetableslot");
   return (
     <div className="space-y-4 bg-gradient-to-tr  p-2 rounded-sm">
       <div className="flex justify-between ">
@@ -419,7 +393,6 @@ interface TimetableGridProps {
             </tr>
           </thead>
           <tbody className="">
-           
             {timeSlots.map((slot, timeIndex) => (
               <tr key={timeIndex}>
                 <td className="border p-2 font-medium bg-[#4B3F72] text-white">
@@ -429,10 +402,8 @@ interface TimetableGridProps {
                     onSave={handleTimeSlotSave}
                     onDelete={handleDeleteTimeSlot}
                   />
-                  
                 </td>
 
-              
                 {DAYS.map((_, dayIndex) => (
                   <td
                     key={`${dayIndex}-${timeIndex}`}

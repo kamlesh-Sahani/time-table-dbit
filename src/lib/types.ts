@@ -6,8 +6,8 @@ export interface Image {
 }
 
 export interface TimetableCell {
-  teacher: string | null;
-  subject: string | null;
+  teacher: string[]; // Ensure teacher is stored as an array
+  subject: string;
 }
 
 export interface TeacherWithSubjects {

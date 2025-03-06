@@ -78,7 +78,9 @@ export const getcourseAndSem = async ()=>{
 
 export const getSchedule = async({course,semester}:{course:string,semester:number})=>{
   try{
+    console.log("Cpourse and semester",course,semester)
     const schedule  = await ScheduleModel.findOne({course,"semesters.semester":semester});
+    console.log("Datakjkdjfld",schedule);
     if(!schedule){
       return{
         message: "schedule is not found",

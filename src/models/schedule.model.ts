@@ -12,8 +12,6 @@ interface DaySchedule {
   dayName: string; // Day of the week (e.g., "Monday", "Tuesday")
   slots: TimeSlot[]; // List of time slots for the day
 }
-
-// ScheduleType interface for the overall timetable
 export interface ScheduleType extends Document {
   course: string; // Course name (e.g., "BCA", "BBA")
   semesters: { semester: number; schedule: DaySchedule[] }[]; // List of semesters and their schedules
